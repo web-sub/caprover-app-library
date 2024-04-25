@@ -35,7 +35,7 @@ caproverOneClickApp:
           description: Interval in milliseconds between cleanup runs.
         - id: $$cap_vacuum_rules
           label: Cleanup Rules
-          defaultValue: '[{"match":"(.*)","retain":2}]'
+          defaultValue: '[{\"match\":\"(.*)\",\"retain\":2}]'
           description: JSON formatted rules defining how many old images to retain.
         - id: $$cap_vacuum_system_prune
           label: System Prune
