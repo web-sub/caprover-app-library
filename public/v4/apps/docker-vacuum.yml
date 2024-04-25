@@ -11,6 +11,8 @@ services:
             VACUUM_SYSTEM_PRUNE: $$cap_vacuum_system_prune
             VACUUM_SYSTEM_PRUNE_VOLUMES: $$cap_vacuum_system_prune_volumes
         restart: always
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
         caproverExtra:
             containerHttpPort: '80'
 caproverOneClickApp:
