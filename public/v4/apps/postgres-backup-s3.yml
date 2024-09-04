@@ -1,0 +1,75 @@
+captainVersion: '4'
+services:
+    $$cap_appname-postgres:
+        image: postgres
+        notExposeAsWebApp: 'true'
+        environment:
+            POSTGRES_USER: $$cap_postgres_user
+            POSTGRES_PASSWORD: $$cap_postgres_password
+        restart: always
+    $$cap_appname-pgbackups3:
+        image: schickling/postgres-backup-s3
+        notExposeAsWebApp: 'true'
+        links:
+            - $$cap_appname-postgres
+        environment:
+            SCHEDULE: $$cap_schedule
+            S3_REGION: $$cap_s3_region
+            S3_ACCESS_KEY_ID: $$cap_s3_access_key_id
+            S3_SECRET_ACCESS_KEY: $$cap_s3_secret_access_key
+            S3_BUCKET: $$cap_s3_bucket
+            S3_PREFIX: $$cap_s3_prefix
+            POSTGRES_DATABASE: $$cap_postgres_database
+            POSTGRES_USER: $$cap_postgres_user
+            POSTGRES_PASSWORD: $$cap_postgres_password
+            POSTGRES_EXTRA_OPTS: $$cap_postgres_extra_opts
+        restart: always
+caproverOneClickApp:
+    variables:
+        - id: $$cap_postgres_user
+          label: Postgres User
+          defaultValue: 'user'
+          description: The username for the Postgres database.
+        - id: $$cap_postgres_password
+          label: Postgres Password
+          defaultValue: 'password'
+          description: The password for the Postgres user.
+        - id: $$cap_postgres_database
+          label: Postgres Database Name
+          defaultValue: 'dbname'
+          description: The name of the Postgres database to back up.
+        - id: $$cap_schedule
+          label: Backup Schedule
+          defaultValue: '@daily'
+          description: Cron expression for the backup schedule.
+        - id: $$cap_s3_region
+          label: S3 Region
+          defaultValue: 'region'
+          description: The AWS S3 region.
+        - id: $$cap_s3_access_key_id
+          label: S3 Access Key ID
+          defaultValue: ''
+          description: Your AWS S3 Access Key ID.
+        - id: $$cap_s3_secret_access_key
+          label: S3 Secret Access Key
+          defaultValue: ''
+          description: Your AWS S3 Secret Access Key.
+        - id: $$cap_s3_bucket
+          label: S3 Bucket
+          defaultValue: 'my-bucket'
+          description: The name of the S3 bucket where backups will be stored.
+        - id: $$cap_s3_prefix
+          label: S3 Prefix
+          defaultValue: 'backup'
+          description: The prefix for the backup files in the S3 bucket.
+        - id: $$cap_postgres_extra_opts
+          label: Postgres Extra Options
+          defaultValue: '--schema=public --blobs'
+          description: Extra options for the pg_dump command.
+    instructions:
+        start: Postgres Backup to S3 allows you to automatically back up your Postgres database to an S3 bucket. Configure the environment variables as needed.
+        end: The backup service is now configured and will start automatically according to the defined schedule.
+    displayName: Postgres Backup to S3
+    isOfficial: false
+    description: Automatically backs up your Postgres database to an S3 bucket on a scheduled basis.
+    documentation: 'https://hub.docker.com/r/schickling/postgres-backup-s3/'
