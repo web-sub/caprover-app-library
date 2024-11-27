@@ -21,6 +21,19 @@ services:
             containerHttpPort: '8080'
             notExposeAsWebApp: false
 
+    $$cap_appname-ui:
+        image: nginx:alpine
+        depends_on:
+            - $$cap_appname
+        ports:
+            - "5173:80"
+        volumes:
+            - $$cap_appname-ui-build:/usr/share/nginx/html
+        restart: unless-stopped
+        caproverExtra:
+            containerHttpPort: '80'
+            notExposeAsWebApp: false
+
     $$cap_appname-postgres:
         image: postgres:15-alpine
         restart: unless-stopped
@@ -64,13 +77,15 @@ caproverOneClickApp:
 
             2. Enable "Force HTTPS by redirecting all HTTP traffic to HTTPS".
 
-            3. Your service is available at http://$$cap_appname.$$cap_root_domain.
+            3. Your service is available at:
+                - Backend: http://$$cap_appname.$$cap_root_domain
+                - Frontend UI: http://$$cap_appname-ui.$$cap_root_domain
 
             Visit the Flipt dashboard to configure your feature flags and experiments.
 
             Note: It may take a minute or two for Flipt to become fully ready.
 
-    displayName: "Flipt Feature Flags"
+    displayName: "Flipt Feature Flags with UI"
     isOfficial: false
     description: "Flipt is an open-source, self-hosted feature flagging and A/B testing service."
     documentation: "https://www.flipt.io/docs"
