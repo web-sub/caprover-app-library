@@ -101,27 +101,27 @@ caproverOneClickApp:
           label: OpenReplay version tag
           defaultValue: latest
           description: Image tag for public.ecr.aws/p1t3u8a3/api and frontend.
-          validRegex: /^([^^\s])+$/
+          validRegex: /.+/
 
         - id: $$cap_postgres_version
           label: Postgres image tag
           defaultValue: '16'
-          validRegex: /^([^^\s])+$/
+          validRegex: /.+/
 
         - id: $$cap_clickhouse_version
           label: ClickHouse image tag
           defaultValue: '24.3'
-          validRegex: /^([^^\s])+$/
+          validRegex: /.+/
 
         - id: $$cap_redis_version
           label: Valkey image tag
           defaultValue: '7'
-          validRegex: /^([^^\s])+$/
+          validRegex: /.+/
 
         - id: $$cap_minio_version
           label: MinIO image tag
           defaultValue: latest
-          validRegex: /^([^^\s])+$/
+          validRegex: /.+/
 
         - id: $$cap_common_pg_password
           label: Postgres password
@@ -166,4 +166,5 @@ volumes:
     $$cap_appname-clickhouse:
     $$cap_appname-redisdata:
     $$cap_appname-miniodata:
+
 
