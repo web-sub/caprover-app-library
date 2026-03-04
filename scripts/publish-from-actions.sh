@@ -49,7 +49,7 @@ if [[ -z "$GITHUB_AUTH_TOKEN" ]]; then
   exit 1
 fi
 
-REMOTE_REPO="https://${GITHUB_AUTH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+REMOTE_REPO="https://x-access-token:${GITHUB_AUTH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 REPONAME="$(echo $GITHUB_REPOSITORY| cut -d'/' -f 2)"
 
 OWNER="$(echo $GITHUB_REPOSITORY| cut -d'/' -f 1)" 
