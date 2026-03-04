@@ -1,6 +1,6 @@
 captainVersion: 4
 services:
-    postgresql:
+    openreplay-postgresql:
         image: ghcr.io/openreplay/postgres:$$cap_postgres_version
         restart: unless-stopped
         volumes:
@@ -12,7 +12,7 @@ services:
         caproverExtra:
             notExposeAsWebApp: 'true'
 
-    clickhouse:
+    openreplay-clickhouse:
         image: clickhouse/clickhouse-server:$$cap_clickhouse_version
         restart: unless-stopped
         volumes:
@@ -26,7 +26,7 @@ services:
         caproverExtra:
             notExposeAsWebApp: 'true'
 
-    redis:
+    openreplay-redis:
         image: ghcr.io/openreplay/valkey:$$cap_redis_version
         restart: unless-stopped
         volumes:
@@ -38,7 +38,7 @@ services:
         caproverExtra:
             notExposeAsWebApp: 'true'
 
-    minio:
+    openreplay-minio:
         image: ghcr.io/openreplay/minio:$$cap_minio_version
         restart: unless-stopped
         volumes:
@@ -51,46 +51,46 @@ services:
         caproverExtra:
             notExposeAsWebApp: 'true'
 
-    api-openreplay:
+    openreplay-api:
         image: public.ecr.aws/p1t3u8a3/api:$$cap_common_version
         restart: unless-stopped
         networks:
             - openreplay-net
         depends_on:
-            - postgresql
-            - clickhouse
-            - redis
-            - minio
+            - openreplay-postgresql
+            - openreplay-clickhouse
+            - openreplay-redis
+            - openreplay-minio
         environment:
-            PGHOST: postgresql
+            PGHOST: srv-captain--openreplay-postgresql
             PGPORT: '5432'
             PGUSER: postgres
             PGPASSWORD: $$cap_common_pg_password
             PGDATABASE: postgres
-            CH_HOST: clickhouse
+            CH_HOST: srv-captain--openreplay-clickhouse
             CH_PORT: '9000'
             CH_PORT_HTTP: '8123'
             CH_USERNAME: default
             CH_PASSWORD: ''
-            REDIS_HOST: redis
+            REDIS_HOST: srv-captain--openreplay-redis
             REDIS_PORT: '6379'
-            MINIO_HOST: http://minio:9000
+            MINIO_HOST: http://srv-captain--openreplay-minio:9000
             MINIO_ACCESS_KEY: $$cap_common_s3_key
             MINIO_SECRET_KEY: $$cap_common_s3_secret
-            SITE_URL: https://$$cap_appname.$$cap_root_domain
+            SITE_URL: https://openreplay-frontend.$$cap_root_domain
         caproverExtra:
             containerHttpPort: '8080'
             notExposeAsWebApp: 'true'
 
-    $$cap_appname:
+    openreplay-frontend:
         image: public.ecr.aws/p1t3u8a3/frontend:$$cap_common_version
         restart: unless-stopped
         networks:
             - openreplay-net
         depends_on:
-            - api-openreplay
+            - openreplay-api
         environment:
-            API_URL: https://$$cap_appname.$$cap_root_domain
+            API_URL: https://openreplay-frontend.$$cap_root_domain
         caproverExtra:
             containerHttpPort: '80'
             notExposeAsWebApp: false
@@ -99,28 +99,28 @@ caproverOneClickApp:
     variables:
         - id: $$cap_common_version
           label: OpenReplay version tag
-          defaultValue: latest
+          defaultValue: v1.23.0
           description: Image tag for public.ecr.aws/p1t3u8a3/api and frontend.
           validRegex: /.+/
 
         - id: $$cap_postgres_version
           label: Postgres image tag
-          defaultValue: '16'
+          defaultValue: '17'
           validRegex: /.+/
 
         - id: $$cap_clickhouse_version
           label: ClickHouse image tag
-          defaultValue: '24.3'
+          defaultValue: 25.11-alpine
           validRegex: /.+/
 
         - id: $$cap_redis_version
           label: Valkey image tag
-          defaultValue: '7'
+          defaultValue: '8'
           validRegex: /.+/
 
         - id: $$cap_minio_version
           label: MinIO image tag
-          defaultValue: latest
+          defaultValue: '2025'
           validRegex: /.+/
 
         - id: $$cap_common_pg_password
@@ -148,9 +148,9 @@ caproverOneClickApp:
         end: >-
             OpenReplay has been deployed as $$cap_appname.
 
-            Enable HTTPS for $$cap_appname and optionally force HTTPS from CapRover app settings.
+            Enable HTTPS for openreplay-frontend and optionally force HTTPS from CapRover app settings.
 
-            URL: https://$$cap_appname.$$cap_root_domain
+            URL: https://openreplay-frontend.$$cap_root_domain
 
     displayName: OpenReplay (self-hosted, minimal)
     isOfficial: false
