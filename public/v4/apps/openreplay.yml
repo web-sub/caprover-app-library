@@ -92,7 +92,7 @@ services:
         environment:
             API_URL: https://$$cap_appname.$$cap_root_domain
         caproverExtra:
-            containerHttpPort: '8080'
+            containerHttpPort: '80'
             notExposeAsWebApp: false
 
 caproverOneClickApp:
@@ -166,3 +166,4 @@ volumes:
     $$cap_appname-clickhouse:
     $$cap_appname-redisdata:
     $$cap_appname-miniodata:
+
