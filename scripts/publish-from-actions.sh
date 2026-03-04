@@ -29,6 +29,7 @@ set -e
 BUILD_DIR=dist
 SOURCE_DIRECTORY_DEPLOY_GH=~/temp-gh-deploy-src
 CLONED_DIRECTORY_DEPLOY_GH=~/temp-gh-deploy-cloned
+GITHUB_AUTH_TOKEN="${GH_PERSONAL_TOKEN:-${GITHUB_TOKEN:-}}"
 
 echo "#############################################" 
 echo "######### making directories" 
@@ -43,7 +44,12 @@ echo "#############################################"
 echo "######### Setting env vars" 
 echo "#############################################" 
 
-REMOTE_REPO="https://${GH_PERSONAL_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+if [[ -z "$GITHUB_AUTH_TOKEN" ]]; then
+  echo "GH_PERSONAL_TOKEN or GITHUB_TOKEN must be set for publishing."
+  exit 1
+fi
+
+REMOTE_REPO="https://${GITHUB_AUTH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 REPONAME="$(echo $GITHUB_REPOSITORY| cut -d'/' -f 2)"
 
 OWNER="$(echo $GITHUB_REPOSITORY| cut -d'/' -f 1)" 
